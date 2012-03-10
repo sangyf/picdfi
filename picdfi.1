@@ -1,0 +1,86 @@
+.\"Modified from man(1) of FreeBSD, the NetBSD mdoc.template, and mdoc.samples.
+.\"See Also:
+.\"man mdoc.samples for a complete listing of options
+.\"man mdoc for the short list of editing options
+.\"/usr/share/misc/mdoc.template
+.Dd 28/2/10               \" DATE 
+.Dt picdfi 1      \" Program name and manual section number 
+.Os Darwin
+.Sh NAME                 \" Section Header - required - don't modify 
+.Nm picflow
+.\" .Nm : Use .Nm macro to designate other names for the documented program.
+.Nd Efficient flow identification 
+.Sh SYNOPSIS             \" Section Header - required - don't modify
+.Nm
+.Op Fl ph
+.Op Fl i Ar interface
+.Op Fl r Ar pcap_infile
+.Op Fl w Ar pcap_outfile
+.Op Fl o Ar flow_file
+.Op Fl f Ar verification_file
+.Op Fl s Ar snaplen
+.Op Fl m Ar timeout
+.Op Fl A Ar ageing
+.Op Fl S Ar uncertain
+.Op Fl L Ar certain
+.\"
+.Sh DESCRIPTION          \" Section Header - required - don't modify
+.Nm
+is a program that performs flow identification using a very simple and efficient
+algorithm that is based only on TCP / UDP ration measurements and timeouts. See
+Thomas Zink, Marcel Waldvogel "Efficient Identification of P2P file sharing traffic" for further details.
+.Pp
+.Nm
+requires libpcap to either capture packet live from the wire or read packets from a
+pcap capture file. The packets are used to update the flow table. The flow information
+is used for identification.
+.Nm
+can classify flows as P2P or Non P2P or UNIDENTIFIED. To verify results, it is possible
+to load a verification file that lists flows and their correspondig type. See options
+below for the correct file format.
+.Pp                      \" Inserts a space
+Options
+.Bl -tag -width -indent
+.It Fl i Ar interface
+Open an interface to capture packets. Defaults to the first interface found.
+.It Fl p
+Don't put interface in promiscuous mode.
+.It Fl s
+Set the snaplen, the number of bytes captured for each packet. Default: 100
+.It Fl m
+Specify the read timeout in ms. Default: 100
+.It Fl h
+Print help.
+.It Fl r Ar pcap_infile
+read a pcap input file.
+.It Fl w Ar pcap_outfile
+write captured packet to pcap output file. Not yet implemented!
+.It Fl o Ar flow_file
+ serialize flows to a flow output file.
+.It Fl f Ar verification_file
+Load a verification file to verify identification results. The format must be plaintext csv
+and have the following fields without header (l:lower, u: upper, a: address, p: port):
+.Pp
+la,lp,ua,up,ip_protocol,created_ts,touched_ts,nackets,nbytes,type
+.It Fl A Ar ageing
+Specify the interval in sec in which the flow table ages, that is, old flows are removed from the 
+table. This is achieved using a callback function which can be used to further process the
+flow record. Defautl: 30 sec
+.It Fl S Ar uncertain
+Set the short timeout in sec for 'uncertain' entries, that is, how long are uncertain flow records considered
+for identification. Default: 10 sec
+.It Fl L Ar certain
+Set the long timeout in sec for 'certain' entries, that is, how long are certain flow records considered
+for indentification. Default: 10*60 sec
+.El
+.Sh EXAMPLE
+.Nm
+-r capture.pcap -f verification.csv
+.br
+.Nm
+-i en0 -A 40 -S 5 -L 300
+.br
+.Sh SEE ALSO
+.Ar Thomas Zink, Marcel Waldvogel, "Efficient Idenfitifaction of P2P File Sharing Traffic"
+.Sh AUTHORS
+Thomas Zink, thomas.zink@uni.kn
