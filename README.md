@@ -13,5 +13,9 @@ in hardware on the PIC level.
 
 Run 'make' to build. Use 'man ./picdfi.1' to read the manual page.
 
+There is a [TechReport available][techreport] with detailed information and documentation about the algorithm
+and implementation.
+
 
 [lgpl]: http://www.gnu.org/copyleft/lesser.html "LGPL"
+[techreport]: http://nbn-resolving.de/urn:nbn:de:bsz:352-188702 "Analysis and efficient classification of P2P file sharing traffic"
