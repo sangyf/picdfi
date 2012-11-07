@@ -1,0 +1,17 @@
+dpkt readme
+thomas.zink
+===========
+
+module extensions for the python dpkt library tp support
+the Cisco HDLC protocol.
+Copy to:
+<path/to/dpkt/lib/>/dpkt/
+
+You need to add the following line to __init__.py in order
+to be able to import chdlc:
+  
+import chdlc
+
+Then compile/install using
+setup.py install.
+

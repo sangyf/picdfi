@@ -35,8 +35,11 @@ You need to have pcap installed. If you want to use the OpenDPI verification pro
 library installed, which unfortunately is now unavailable. But there are several snapshots floating around.
 
 For the python version you also need to have python pcap wrappers. The program is designed to run with [pylibpcap][pypcap].
+For packet dissectioning [dpkt][dpkt] is required. It has to be modified to support the cisco DHLC protocol. The sources
+are available in lib/dpkt.
 
 [lgpl]: http://www.gnu.org/copyleft/lesser.html "LGPL"
 [techreport]: http://nbn-resolving.de/urn:nbn:de:bsz:352-188702 "Analysis and efficient classification of P2P file sharing traffic"
 [opendpi]: http://www.opendpi.org/ "OpenDPI"
 [pypcap]: http://sourceforge.net/projects/pylibpcap/ "pylibpcap"
+[dpkt]: http://code.google.com/p/dpkt/ "dpkt"
