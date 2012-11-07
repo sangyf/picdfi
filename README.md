@@ -16,6 +16,15 @@ Run 'make' to build. Use 'man ./picdfi.1' to read the manual page.
 There is a [TechReport available][techreport] with detailed information and documentation about the algorithm
 and implementation.
 
+picDFI supports verification files to verify classification results. These can be generated with other classification
+tool like [OpenDPI][opendpi]. The directory OpenDPI contains an implementation of a program that uses OpenDPI to
+classify packets, converts the results to picDFI flow classes and then writes a verification file.
+
+## Dependencies
+
+You need to have pcap installed. If you want to use the OpenDPI verification program, you also need to have the OpenDPI
+library installed, which unfortunately is now unavailable. But there are several snapshots floating around.
 
 [lgpl]: http://www.gnu.org/copyleft/lesser.html "LGPL"
 [techreport]: http://nbn-resolving.de/urn:nbn:de:bsz:352-188702 "Analysis and efficient classification of P2P file sharing traffic"
+[opendpi]: http://www.opendpi.org/ "OpenDPI"
