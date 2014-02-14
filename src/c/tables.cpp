@@ -53,9 +53,21 @@ const char *signatures[] = {
 	"\x27\x00\x00\x00","\xe3\x19\x01\x00","\xc5\x3f\x01\x00"
 };
 
+/*
+ port matching
+ not yet implemented
+ only list of well known P2P ports
+*/
+const int ports[] = {
+	6346,6347, // limewire, morpheus, bearshare
+	4662,4672, // ed2k
+	6881,6882,6883,6884,6885,6886,6887,6888,6889,6890, // bittorrent
+	6969,	// bittorrent tracker
+	6699,6257 // winmx
+};
+
 const size_t sig_num = 12;
 const size_t sig_size = 4;
-
 
 
 void
