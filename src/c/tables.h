@@ -31,7 +31,7 @@ typedef map<verification_type,pic_stat_s> vstat_table_t;
 
 void init_statistics (void);
 pair<flow_table_t::iterator,bool> flow_table_update (u_char * args, const struct pcap_pkthdr *header, const u_char * ippacket);
-identification_type identify_flow (flow_table_t::iterator it_flows, const u_char * payload);
+identification_type identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_char * payload);
 void update_flow (flow_table_t::iterator it_flows, bool certain);
 void do_ageing (const struct pcap_pkthdr *header, flow_handler_f callback);
 void flush_flows (flow_handler_f callback);

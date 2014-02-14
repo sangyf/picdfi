@@ -53,12 +53,15 @@ const char *signatures[] = {
 	"\x27\x00\x00\x00","\xe3\x19\x01\x00","\xc5\x3f\x01\x00"
 };
 
+const size_t sig_num = 12;
+const size_t sig_size = 4;
+
 /*
  port matching
  not yet implemented
  only list of well known P2P ports
 */
-const int ports[] = {
+const u_int16_t ports[] = {
 	6346,6347, // limewire, morpheus, bearshare
 	4662,4672, // ed2k
 	6881,6882,6883,6884,6885,6886,6887,6888,6889,6890, // bittorrent
@@ -66,8 +69,8 @@ const int ports[] = {
 	6699,6257 // winmx
 };
 
-const size_t sig_num = 12;
-const size_t sig_size = 4;
+const size_t port_num = 17;
+
 
 
 void
@@ -128,7 +131,7 @@ flow_table_update (u_char * args, const struct pcap_pkthdr * header, const u_cha
 }
 
 identification_type
-identify_flow (flow_table_t::iterator it_flows, const u_char * payload)
+identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_char * payload)
 {
 	identification_table_t::iterator it_lower;
 	identification_table_t::iterator it_upper;
@@ -145,6 +148,18 @@ identify_flow (flow_table_t::iterator it_flows, const u_char * payload)
 #endif
 			update_flow(it_flows, true);
 			return (payload_match);
+		}
+	}
+	
+	// check ports
+	// if dport in port list, it's certain P2P
+	for (i=0; i<port_num; i++) {
+		if (dport == ports[i]) {
+#if DEBUG >= 2
+			cout << "port_match " << dport << "\n";
+#endif	
+			update_flow(it_flows, true);
+			return (port_match);			
 		}
 	}
 	

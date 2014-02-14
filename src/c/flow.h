@@ -33,6 +33,7 @@ enum picdfi_type {
 
 enum identification_type {
 	payload_match,
+	port_match,
 	tcp_certain,
 	tcp_none,
 	udp_certain,

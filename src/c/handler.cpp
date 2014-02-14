@@ -132,6 +132,7 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 	size_t size_ip = (ip->ip_hl*4);
 	void * segment = NULL;
 	size_t segment_hdr_size = 0;
+	u_int16_t dport = 0;
 	const u_char * payload;
 	// return values from flow / service tables
 	pair<map<pic_connection_t,pic_flow_t>::iterator,bool> ret_flows;
@@ -148,6 +149,7 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 		case IPPROTO_TCP:
 			segment = (tcp_t *) (ippacket + size_ip);
 			segment_hdr_size = ((tcp_t *)segment)->th_off * 4;
+			dport = ((tcp_t *)segment)->th_dport;
 #if DEBUG >= 1
 			tcp_handler(args, header, ippacket);
 #endif
@@ -155,6 +157,7 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 		case IPPROTO_UDP:
 			segment = (udp_t *) (ippacket + size_ip);
 			segment_hdr_size = 8;
+			dport = ((udp_t *)segment)->uh_dport;
 #if DEBUG >= 1
 			udp_handler(args, header, ippacket);
 #endif
@@ -174,8 +177,8 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 	
 	// check if we need identification
 	if (ret_flows.first->second.flow_type <= type_possible) {
-		//ret_services = identify_flow(ret_flows.first,payload);
-		identify_flow(ret_flows.first,payload);
+		//ret_services = identify_flow(ret_flows.first,dport,payload);
+		identify_flow(ret_flows.first,dport,payload);
 	}
 #if DEBUG == 0
 	// update and output progress
