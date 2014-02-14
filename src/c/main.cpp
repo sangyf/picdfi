@@ -25,6 +25,9 @@
 #include "optpar.h"			// options parser
 #include "tables.h"			// all the table stuff
 #include "fileio.h"			// loading verification, dumping flows
+#include <unistd.h>			// geteuid
+//#include <sys/types.h>
+
 
 using namespace std;
 
@@ -48,7 +51,7 @@ int
 main (int argc, const char * argv[])
 {
 	print_banner();
-	if (getuid()) {
+	if (geteuid()) {
         printf("ERROR: must be root ... exiting\n");
         abort();
     }

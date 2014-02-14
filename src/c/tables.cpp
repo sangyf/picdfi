@@ -175,7 +175,7 @@ identify_flow (flow_table_t::iterator it_flows, const u_char * payload)
 	}
 	
 	if (it_flows->first.ip_p == IPPROTO_UDP) {
-		if (recent_lower && certain_lower || recent_upper && certain_upper) {
+		if ((recent_lower && certain_lower) || (recent_upper && certain_upper)) {
 #if DEBUG >= 2
 			cout << "udp_certain\n";
 #endif			

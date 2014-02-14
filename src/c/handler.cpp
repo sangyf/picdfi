@@ -135,7 +135,7 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 	const u_char * payload;
 	// return values from flow / service tables
 	pair<map<pic_connection_t,pic_flow_t>::iterator,bool> ret_flows;
-	u_char ret_services;
+	// u_char ret_services;  // warning: variable ‘ret_services’ set but not used
 	
 #if DEBUG >= 1
 	char sip[INET_ADDRSTRLEN], dip[INET_ADDRSTRLEN];
@@ -174,7 +174,8 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 	
 	// check if we need identification
 	if (ret_flows.first->second.flow_type <= type_possible) {
-		ret_services = identify_flow(ret_flows.first,payload);
+		//ret_services = identify_flow(ret_flows.first,payload);
+		identify_flow(ret_flows.first,payload);
 	}
 #if DEBUG == 0
 	// update and output progress
