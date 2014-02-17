@@ -193,7 +193,7 @@ identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_c
 			return (tcp_certain);
 		}
 		else {
-			//it_flows->second.flow_type = PICDFI_TYPE_NONP2P;
+			it_flows->second.flow_type = type_nonp2p;
 #if DEBUG >= 2
 			cout << "tcp_none\n";
 #endif			
@@ -338,7 +338,7 @@ print_statistics (void)
 				cout << "\x1b[31mP2P\x1b[0m\t\t";
 				break;
 			case type_nonp2p:
-				cout << "\x1b[31mNON P2P\x1b[0m\t\t";
+				cout << "\x1b[31mNONP2P\x1b[0m\t\t";
 				break;
 			default:
 				break;

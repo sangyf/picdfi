@@ -44,7 +44,8 @@ void print_banner (void);
 */
 optarg_t * optargs;			// cmd opts
 jmp_buf state;				// signalling state
-flow_handler_f flow_callback = &update_stats_print_flow;
+//flow_handler_f flow_callback = &update_stats_print_flow;
+flow_handler_f flow_callback = &update_stats;
 
 
 int

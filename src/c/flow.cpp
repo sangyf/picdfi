@@ -286,9 +286,10 @@ update (pic_flow_s f)
 ostream & operator<< (ostream & stream, const pic_stat_s & o)
 {
 	stream 
-		<< "flows: \x1b[36m" << setw(10) << o.nflows << "\x1b[0m "
 		<< "packets: \x1b[33m" << setw(10) << o.npackets << "\x1b[0m "
-		<< "bytes: \x1b[34m"<< setw(10) << o.nbytes << "\x1b[0m";
+		<< "bytes: \x1b[34m"<< setw(10) << o.nbytes << "\x1b[0m "
+		<< "flows: \x1b[36m" << setw(10) << o.nflows << "\x1b[0m "
+	;
 	return (stream);
 }
 #endif //__cplusplus
