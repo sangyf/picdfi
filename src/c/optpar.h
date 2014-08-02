@@ -19,7 +19,6 @@ typedef struct optarg_s {
 	const char * infile;		// pcap input file name (-r)
 	const char * outfile;		// flow serialization outfile (-o)
 	const char * dumpfile;		// pcap dump file name (-w)
-	const char * vfile;			// verification file name (-f)
 	uint8_t promiscuous;		// promiscuity	(-p)
 	uint16_t to_ms;				// read timeout in ms (-m)
 	const char * filter;		// remaining filter string

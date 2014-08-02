@@ -104,8 +104,8 @@ typedef struct pic_flow_s {
 	u_int32_t npackets;
 	u_int32_t nbytes;
 	u_char options;
-	//u_char flow_type;
 	picdfi_type flow_type;
+	identification_type id_type;
 #ifdef __cplusplus
 	// constructor / destructor
 	pic_flow_s ();

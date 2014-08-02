@@ -24,7 +24,6 @@
 #include "defines.h"		// info about this app and global defines
 #include "optpar.h"			// options parser
 #include "tables.h"			// all the table stuff
-#include "fileio.h"			// loading verification, dumping flows
 #include <unistd.h>			// geteuid
 //#include <sys/types.h>
 
@@ -60,10 +59,6 @@ main (int argc, const char * argv[])
 #if DEBUG >= 1
 	options_print(optargs);
 #endif
-	if (optargs->vfile != NULL) {
-		load_verification_file(optargs->vfile);
-		flow_callback = &update_stats_verify_flow;
-	} 
 	init_statistics();
 	time_t start, stop;
 	start = time(NULL);

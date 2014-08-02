@@ -30,9 +30,7 @@ void chdlc_handler (u_char * args, const struct pcap_pkthdr *header, const u_cha
 void ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippacket);
 void tcp_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippacket);
 void udp_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippacket);
-void verify_flow (pic_connection_t conn, pic_flow_t flow);
 void update_stats (pic_connection_t conn, pic_flow_t flow);
-void update_stats_verify_flow (pic_connection_t conn, pic_flow_t flow);
 void update_stats_print_flow (pic_connection_t conn, pic_flow_t flow);
 
 #endif // _HANDLER_H_

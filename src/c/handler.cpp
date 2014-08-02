@@ -34,8 +34,7 @@ extern optarg_t* optargs;
 extern flow_table_t flows;
 extern identification_table_t services;
 extern statistic_table_t statistics;
-extern verification_table_t verify;
-extern vstat_table_t vstats;
+extern idstat_table_t idstats;
 extern u_int32_t ip_packets_scanned;
 extern u_int32_t ip_bytes_scanned;
 extern long last_aged;
@@ -180,7 +179,7 @@ ip_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ippa
 		//ret_services = identify_flow(ret_flows.first,dport,payload);
 		identify_flow(ret_flows.first,dport,payload);
 	}
-#if DEBUG == 0
+#if DEBUG >= 0
 	// update and output progress
 	cout << "\rip packets scanned: \x1b[33m" << ++ip_packets_scanned << "\x1b[0m" << endl;
 	ip_bytes_scanned += header->len;
@@ -211,109 +210,16 @@ udp_handler (u_char * args, const struct pcap_pkthdr *header, const u_char * ipp
 }
 
 void
-verify_flow (pic_connection_t conn, pic_flow_t flow)
-{
-	verification_table_t::iterator it_v;
-	it_v = verify.find(conn);
-#if ASSERT == 1
-	assert (it_v != verify.end());
-#endif
-#if DEBUG >= 2
-	cout << "(verify) " << conn << endl;
-	cout << "(verify) " << flow << endl;
-	if (it_v == verify.end()) cout << "(verify) no entry\n";
-	else cout << "(verify) " << it_v->second << endl;
-#endif
-	if (it_v == verify.end() || it_v->second.flow_type == type_unidentified) {
-		// unable to verify
-		switch (flow.flow_type) {
-			case type_p2p:
-#if DEBUG >= 2
-				cout << "(verify) NP" << endl;
-#endif
-				vstats[na_positive].update(flow);
-				break;
-			case type_nonp2p:
-			case type_possible:
-			case type_unidentified:
-#if DEBUG >= 2
-				cout << "(verify) NN" << endl;
-#endif			
-				vstats[na_negative].update(flow);
-				break;
-			default:
-				break;
-		}
-	} else {
-#if DEBUG >= 2
-		cout << "(verify) " << it_v->second << endl;
-#endif
-		switch (it_v->second.flow_type) {
-			case type_p2p:
-				switch (flow.flow_type) {
-					case type_p2p:
-#if DEBUG >= 2
-						cout << "(verify) TP" << endl;
-#endif						
-						vstats[true_positive].update(flow);
-						break;
-					case type_nonp2p:
-					case type_possible:
-					case type_unidentified:
-#if DEBUG >= 2
-						cout << "(verify) FN" << endl;
-#endif						
-						vstats[false_negative].update(flow);
-						break;
-					default:
-						break;
-				}
-				break;
-			case type_nonp2p:
-			case type_possible:
-			case type_unidentified:
-				switch (flow.flow_type) {
-					case type_p2p:
-#if DEBUG >= 2
-						cout << "(verify) FP" << endl;
-#endif						
-						vstats[false_positive].update(flow);
-						break;
-					case type_nonp2p:
-					case type_possible:
-					case type_unidentified:
-#if DEBUG >= 2
-						cout << "(verify) TN" << endl;
-#endif						
-						vstats[true_negative].update(flow);
-						break;
-					default:
-						break;
-				}
-				break;
-			default:
-				break;
-		}
-	}
-
-}
-
-void
-update_stats_verify_flow (pic_connection_t conn, pic_flow_t flow)
-{
-	statistics[flow.flow_type].update(flow);
-	verify_flow(conn, flow);
-}
-
-void
 update_stats  (pic_connection_t conn, pic_flow_t flow)
 {
 	statistics[flow.flow_type].update(flow);
+	idstats[flow.id_type].update(flow);
 }
 
 void
 update_stats_print_flow (pic_connection_t conn, pic_flow_t flow)
 {
 	statistics[flow.flow_type].update(flow);
+	idstats[flow.id_type].update(flow);
 	cout << "\n\t" << conn << " : " << flow << endl;
 }

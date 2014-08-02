@@ -63,7 +63,7 @@ optarg_t * parse_options (int argc, const char * argv[])
 	
 	// check arguments
 	int c;
-	while ((c = getopt(argc, (char**)argv, "s:r:o:w:m:i:f:A:S:L:p?h")) != -1) {
+	while ((c = getopt(argc, (char**)argv, "s:r:o:w:m:i:A:S:L:p?h")) != -1) {
 		switch (c) {
 			case 's':
 				poptarg->snaplen = atoi(optarg);
@@ -76,9 +76,6 @@ optarg_t * parse_options (int argc, const char * argv[])
 				break;
 			case 'w':
 				poptarg->dumpfile = optarg;
-				break;
-			case 'f':
-				poptarg->vfile = optarg;
 				break;
 			case 'm':
 				poptarg->to_ms = atoi(optarg);
@@ -124,7 +121,6 @@ void usage (void)
 		   "-r\t\tpcap input file\n"
 		   "-w\t\tpcap dump file (not yet implemented!)\n"
 		   "-o\t\tflow serialization file (not yet implemented!)\n"
-		   "-f\t\tverification file\n"
 		   "-p\t\tdon't put interface into promiscuous mode\n"
 		   "-s\t\tsnaplen, how many bytes to capture for each packet\n"
 		   "-m\t\ttimeout in ms\n"
@@ -145,12 +141,11 @@ void options_print (optarg_t *p)
 		   "infile: %s\n"
 		   "outfile: %s\n"
 		   "dumpfile: %s\n"
-		   "vfile: %s\n"
 		   "promiscuous: %i\n"
 		   "to_ms: %i\n"
 		   "filter: %s\n"
 		   ,p,p->dev,p->snaplen,
-		   p->infile,p->outfile,p->dumpfile,p->vfile,
+		   p->infile,p->outfile,p->dumpfile,
 		   p->promiscuous,p->to_ms,p->filter
 	);
 }

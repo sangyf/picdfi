@@ -28,7 +28,7 @@
  1 : packet level
  2 : flow level
 */
-#define DEBUG 0
+#define DEBUG -1
 
 /*
  assert table integrity

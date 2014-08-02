@@ -28,8 +28,7 @@ extern optarg_t * optargs;
 flow_table_t flows;					// flow table
 identification_table_t services;	// identification table
 statistic_table_t statistics;		// calcultaing flow stats
-verification_table_t verify;		// verification table
-vstat_table_t vstats;				// calc verification stats
+idstat_table_t idstats;				// calc identifiation stats
 pic_stat_s total_flows;
 
 // just for progress
@@ -76,18 +75,19 @@ const size_t port_num = 17;
 void
 init_statistics (void)
 {
+	// statistics table
 	statistics[type_unidentified] = pic_stat_s();
 	statistics[type_possible] = pic_stat_s();
 	statistics[type_p2p] = pic_stat_s();
 	statistics[type_nonp2p] = pic_stat_s();
-	vstats[na_positive] = pic_stat_s();
-	if (optargs->vfile != NULL) {
-		vstats[na_negative] = pic_stat_s();
-		vstats[true_positive] = pic_stat_s();
-		vstats[false_negative] = pic_stat_s();
-		vstats[true_negative] = pic_stat_s();
-		vstats[false_negative] = pic_stat_s();
-	}
+	// identification table stats
+	idstats[port_match] = pic_stat_s();
+	idstats[payload_match] = pic_stat_s();
+	idstats[tcp_certain] = pic_stat_s();
+	idstats[tcp_none] = pic_stat_s();
+	idstats[udp_certain] = pic_stat_s();
+	idstats[udp_uncertain] = pic_stat_s();
+	idstats[no_match] = pic_stat_s();
 }
 
 pair<flow_table_t::iterator,bool>
@@ -138,18 +138,7 @@ identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_c
 	bool recent_lower, recent_upper, certain_lower, certain_upper;
 	recent_lower = recent_upper = certain_lower = certain_upper = false;
 	
-	// first check the payload
-	// if we find a signature, it's certain P2P
 	uint i;
-	for (i=0; i<sig_num; i++) {
-		if (memcmp(payload,signatures[i],4) == 0) {
-#if DEBUG >= 2
-			cout << "payload_match " << payload << "\n";
-#endif
-			update_flow(it_flows, true);
-			return (payload_match);
-		}
-	}
 	
 	// check ports
 	// if dport in port list, it's certain P2P
@@ -159,10 +148,26 @@ identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_c
 			cout << "port_match " << dport << "\n";
 #endif	
 			update_flow(it_flows, true);
-			return (port_match);			
+			//update_flow(it_flows, false);
+			it_flows->second.id_type = port_match;
+			return (port_match);
 		}
 	}
-	
+
+	// check the payload
+	// if we find a signature, it's certain P2P
+	for (i=0; i<sig_num; i++) {
+		if (memcmp(payload,signatures[i],4) == 0) {
+#if DEBUG >= 2
+			cout << "payload_match " << payload << "\n";
+#endif
+			update_flow(it_flows, true);
+			//update_flow(it_flows, false);
+			it_flows->second.id_type = payload_match;
+			return (payload_match);
+		}
+	}
+		
 	// get {recent,certain}_{lower,upper}
 	it_lower = services.find(*(it_flows->first.lower));
 	it_upper = services.find(*(it_flows->first.upper));
@@ -183,36 +188,41 @@ identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_c
 		<< recent_lower << certain_lower
 		<< recent_upper << certain_upper << endl;
 #endif
-	// protocol dependent identification
+	// protocol dependent identification TCP
 	if (it_flows->first.ip_p == IPPROTO_TCP) {
 		if (recent_lower || recent_upper) {
 #if DEBUG >= 2
 			cout << "tcp_certain\n";
 #endif
 			update_flow(it_flows, true);
+			it_flows->second.id_type = tcp_certain;
 			return (tcp_certain);
 		}
 		else {
 			it_flows->second.flow_type = type_nonp2p;
 #if DEBUG >= 2
 			cout << "tcp_none\n";
-#endif			
+#endif
+			it_flows->second.id_type = tcp_none;			
 			return (tcp_none);
 		}
 	}
 	
+	// protocol dependent identification UDP
 	if (it_flows->first.ip_p == IPPROTO_UDP) {
 		if ((recent_lower && certain_lower) || (recent_upper && certain_upper)) {
 #if DEBUG >= 2
 			cout << "udp_certain\n";
 #endif			
 			update_flow(it_flows, true);
+			it_flows->second.id_type = udp_certain;
 			return (udp_certain);
 		}
 #if DEBUG >= 2
 		cout << "udp_uncertain\n";
 #endif		
 		update_flow(it_flows, false);
+		it_flows->second.id_type = udp_uncertain;
 		return (udp_uncertain);
 	}
 	
@@ -220,8 +230,8 @@ identify_flow (flow_table_t::iterator it_flows, const u_int16_t dport, const u_c
 #if DEBUG >= 2
 	cout << "no_match\n";
 #endif	
-	//it_flows->second.flow_type = PICDFI_TYPE_NONP2P;
 	it_flows->second.flow_type = type_nonp2p;
+	it_flows->second.id_type = no_match;
 	return (no_match);
 }
 
@@ -262,7 +272,6 @@ update_flow (flow_table_t::iterator it_flows, bool certain)
 			<< ret_upper.first->first << " : " << ret_upper.first->second << endl;
 #endif
 	}
-	//it_flows->second.flow_type = certain ? PICDFI_TYPE_P2P : PICDFI_TYPE_POSSIBLE;
 	it_flows->second.flow_type = certain ? type_p2p : type_possible;
 #if DEBUG >= 2
 	cout << "(size services) " << services.size() << endl;
@@ -276,12 +285,11 @@ do_ageing (const struct pcap_pkthdr *header, flow_handler_f callback)
 	flow_table_t::iterator it_flows;
 	for (it_flows=flows.begin(); it_flows!=flows.end(); ++it_flows) {
 		if ((header->ts.tv_sec - it_flows->second.touched.tv_sec) > optargs->t_age) {
-			//statistics[it_flows->second.flow_type].update(it_flows->second);
 #if DEBUG == -1
-			cout << it_flows->first << " : " << it_flows->second << endl;
+			cout << it_flows->first << "," << it_flows->second << endl;
 #endif
 #if DEBUG >= 2
-			cout << "(flow erase) " << it_flows->first << " : " << it_flows->second << endl;
+			cout << "(flow erase) " << it_flows->first << "," << it_flows->second << endl;
 #endif
 			callback (it_flows->first, it_flows->second);
 			flows.erase(it_flows);
@@ -345,34 +353,33 @@ print_statistics (void)
 		}
 		cout << it_stats->second << "\n";
 	}
-	if (optargs->vfile != NULL) {
-		cout << "Verification Summary\n";
-		vstat_table_t::iterator it_vstats;
-		for (it_vstats=vstats.begin(); it_vstats!=vstats.end(); ++it_vstats) {
-			switch (it_vstats->first) {
-				case na_positive:
-					cout << "\x1b[31mNP\x1b[0m\t";
-					break;
-				case na_negative:
-					cout << "\x1b[31mNN\x1b[0m\t";
-					break;
-				case true_positive:
-					cout << "\x1b[31mTP\x1b[0m\t";
-					break;
-				case false_positive:
-					cout << "\x1b[31mFP\x1b[0m\t";
-					break;
-				case true_negative:
-					cout << "\x1b[31mTN\x1b[0m\t";
-					break;
-				case false_negative:
-					cout << "\x1b[31mFN\x1b[0m\t";
-					break;
-				default:
-					break;
-			}
-			cout << it_vstats->second << "\n";
+	cout << "Identification Type Summary\n";
+	idstat_table_t::iterator it_idstats;
+	for (it_idstats = idstats.begin(); it_idstats!=idstats.end(); ++it_idstats) {
+		switch (it_idstats->first) {
+			case payload_match:
+				cout << "\x1b[31mPAYLOAD_MATCH\x1b[0m\t";
+				break;
+			case port_match:
+				cout << "\x1b[31mPORT_MATCH\x1b[0m\t";
+				break;
+			case tcp_certain:
+				cout << "\x1b[31mTCP_CERTAIN\x1b[0m\t";
+				break;
+			case udp_certain:
+				cout << "\x1b[31mUDP_CERTAIN\x1b[0m\t";
+				break;
+			case tcp_none:
+				cout << "\x1b[31mTCP_NONE\x1b[0m\t";
+				break;
+			case udp_uncertain:
+				cout << "\x1b[31mUDP_UNCERTAIN\x1b[0m\t";
+				break;
+			case no_match:
+				cout << "\x1b[31mNO_MATCH\x1b[0m\t";
+				break;
 		}
+		cout << it_idstats->second << "\n";
 	}
 }
 

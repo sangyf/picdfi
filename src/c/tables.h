@@ -25,9 +25,7 @@ typedef pair<pic_connection_s,pic_flow_s> flow_table_entry_t;
 typedef map<pic_service_s,pic_ident_s> identification_table_t;
 typedef pair<pic_service_s,pic_ident_s> identification_table_entry_t;
 typedef map<picdfi_type,pic_stat_s> statistic_table_t;
-typedef map<pic_connection_s,pic_flow_s> verification_table_t;
-typedef pair<pic_connection_s,pic_flow_s> verification_table_entry_t;
-typedef map<verification_type,pic_stat_s> vstat_table_t;
+typedef map<identification_type,pic_stat_s> idstat_table_t;
 
 void init_statistics (void);
 pair<flow_table_t::iterator,bool> flow_table_update (u_char * args, const struct pcap_pkthdr *header, const u_char * ippacket);

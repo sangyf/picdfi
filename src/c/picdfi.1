@@ -17,7 +17,6 @@
 .Op Fl r Ar pcap_infile
 .Op Fl w Ar pcap_outfile
 .Op Fl o Ar flow_file
-.Op Fl f Ar verification_file
 .Op Fl s Ar snaplen
 .Op Fl m Ar timeout
 .Op Fl A Ar ageing
@@ -35,9 +34,7 @@ requires libpcap to either capture packet live from the wire or read packets fro
 pcap capture file. The packets are used to update the flow table. The flow information
 is used for identification.
 .Nm
-can classify flows as P2P or Non P2P or UNIDENTIFIED. To verify results, it is possible
-to load a verification file that lists flows and their correspondig type. See options
-below for the correct file format.
+can classify flows as P2P or NONP2P. 
 .Pp                      \" Inserts a space
 Options
 .Bl -tag -width -indent
@@ -57,9 +54,6 @@ read a pcap input file.
 write captured packet to pcap output file. Not yet implemented!
 .It Fl o Ar flow_file
  serialize flows to a flow output file.
-.It Fl f Ar verification_file
-Load a verification file to verify identification results. The format must be plaintext csv
-and have the following fields without header (l:lower, u: upper, a: address, p: port):
 .Pp
 la,lp,ua,up,ip_protocol,created_ts,touched_ts,nackets,nbytes,type
 .It Fl A Ar ageing
@@ -75,7 +69,7 @@ for indentification. Default: 10*60 sec
 .El
 .Sh EXAMPLE
 .Nm
--r capture.pcap -f verification.csv
+-r capture.pcap
 .br
 .Nm
 -i en0 -A 40 -S 5 -L 300

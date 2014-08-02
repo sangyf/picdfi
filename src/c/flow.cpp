@@ -164,8 +164,8 @@ pic_flow_s ()
 	this->npackets = 0;
 	this->nbytes = 0;
 	this->options = 0;
-	//this->flow_type = PICDFI_TYPE_UNIDENTIFIED;
 	this->flow_type = type_unidentified;
+	this->id_type = no_match;
 }
 
 pic_flow_s::
@@ -176,8 +176,8 @@ pic_flow_s (const struct pcap_pkthdr *header)
 	this->npackets = 1;
 	this->nbytes = header->len;
 	this->options = 0;
-	//this->flow_type = PICDFI_TYPE_UNIDENTIFIED;
 	this->flow_type = type_unidentified;
+	this->id_type = no_match;
 }
 
 pic_flow_s::
