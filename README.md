@@ -1,8 +1,10 @@
-Copyright 2010-2011 Thomas Zink (thomas.zink < at > uni < dot > kn)
+    Copyright (C) 1010-2014 Thomas Zink (thomas.zink < at > uni < dot > kn)
 
-This is free Software. It can be used under the terms of the most
-current version of the [Lesser General Public License][lgpl] (LGPL).
-Provided as is and NO WARRANTIES OR GUARANTEES OF ANY KIND! See the GNU General Public License for more details.
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 # PICDFI - Deep Flow Inspection on Physical Interface Cards ##################
 
